@@ -17,7 +17,7 @@ class CreateAventuresTable extends Migration
             $table->id();
             $table->string('ave_name');
             $table->string('ave_code');
-            $table->unsignedBigInteger('ave_quantity_participants');
+            $table->unsignedBigInteger('ave_quantity_participants')->default(0);
             $table->timestamps();
         });
     }

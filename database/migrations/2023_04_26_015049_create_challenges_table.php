@@ -15,9 +15,11 @@ class CreateChallengesTable extends Migration
     {
         Schema::create('challenges', function (Blueprint $table) {
             $table->id();
-            $table->string("chal_type");
             $table->unsignedBigInteger('lev_id');
             $table->unsignedBigInteger('gam_id');
+            $table->json('cha_val1')->nullable();
+            $table->json('cha_val2')->nullable();
+            $table->json('cha_val3')->nullable();
             $table->foreign('lev_id')->references('id')->on('levels')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('gam_id')->references('id')->on('games')->onDelete('cascade')->onUpdate('cascade');
 
