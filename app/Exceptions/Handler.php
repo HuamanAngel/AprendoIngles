@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException as ValidationException;
 use Throwable;
 
@@ -35,7 +36,8 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            // Log::error('Exception: ' . $e->getMessage() . ' at line ' . $e->getLine());            
+            // parent::report($e);
         });
     }
     protected function invalidJson($request, ValidationException $exception)

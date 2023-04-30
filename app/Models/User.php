@@ -30,5 +30,5 @@ class User extends Authenticatable
     public function userAventure()
     {   
         return $this->hasMany(Use_ave::class,'us_id');
-    }    
+    }
 }

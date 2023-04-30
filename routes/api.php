@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AventureController;
+use App\Http\Controllers\ChallengeController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\NivelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,5 +36,8 @@ Route::group([
         Route::get('logout', [AuthController::class,'logout']);
         Route::get('user', [AuthController::class,'user']);
         Route::post('joinAventure', [AventureController::class,'joinToAventure']);
+        Route::get('aventure', [AventureController::class,'index']);
+        Route::get('aventure/level/{id}', [LevelController::class,'showLevelsByAventure']);
+        Route::get('aventure/level/challenge/{idLevel}', [ChallengeController::class,'getChallengesByLevel']);
     });
 });

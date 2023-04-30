@@ -14,4 +14,14 @@ class Aventure extends Model
         'ave_code',
         'ave_quantity_participants',
     ];
+
+    public function AventureLevel()
+    {
+        return $this->hasMany(Level::class,'ave_id');        
+    }
+
+    public function AventureUseAve()
+    {
+        return $this->hasMany(Use_ave::class,'ave_id');        
+    }
 }

@@ -16,7 +16,22 @@ class AventureController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $aventure = auth()->user()->userAventure->load(['UseAveAventure']);
+            $aventure = $aventure->map(function($aventure,$key){
+                return $aventure->UseAveAventure;
+            });
+            return response()->json([
+                'res' => true,
+                'message' => $aventure,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'res' => false,
+                'exception' => $e->getMessage(),
+                'message' => 'Error al intentar obtener registros de las aventuras',
+            ], 500);
+        }        
     }
 
     /**
@@ -68,7 +83,7 @@ class AventureController extends Controller
     {
         try {
 
-            $request->validate([
+            $requestes->validate([
                 'code' => 'required|string|max:20',
                 // 'code' => 'required|integer|exists:roadmaps,road_id'
             ]);
@@ -102,7 +117,7 @@ class AventureController extends Controller
             return response()->json([
                 'res' => false,
                 'exception' => $e->getMessage(),
-                'message' => 'Error al calificar. Intente mas tarde',
+                'message' => 'Error al intentar registrar el codigo. Intentelo mas tarde',
             ],500);            
         }
     }

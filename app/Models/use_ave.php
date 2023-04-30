@@ -16,4 +16,9 @@ class Use_ave extends Model
         'use_ave_challenge_complete',
         'use_ave_complete',
     ];    
+
+    public function UseAveAventure()
+    {
+        return $this->belongsTo(Aventure::class,'ave_id','id');
+    }
 }
