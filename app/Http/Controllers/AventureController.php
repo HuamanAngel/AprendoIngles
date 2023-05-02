@@ -96,7 +96,8 @@ class AventureController extends Controller
                 ], 404);
             }
             // Check if register code in database
-            $hasExistRegisterAventure = Use_ave::where('ave_id', $aventure->id)->where('us_id', auth()->user()->id);
+            $hasExistRegisterAventure = Use_ave::where('ave_id', $aventure->id)->where('us_id', auth()->user()->id)->first();
+
             if ($hasExistRegisterAventure != null) {
                 return response()->json([
                     'res' => false,
