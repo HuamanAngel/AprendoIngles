@@ -26,6 +26,7 @@ class AventureController extends Controller
                 'message' => $aventure,
             ], 200);
         } catch (Exception $e) {
+            report($e);
             return response()->json([
                 'res' => false,
                 'exception' => $e->getMessage(),
@@ -83,7 +84,7 @@ class AventureController extends Controller
     {
         try {
 
-            $requestes->validate([
+            $request->validate([
                 'code' => 'required|string|max:20',
                 // 'code' => 'required|integer|exists:roadmaps,road_id'
             ]);
@@ -114,6 +115,7 @@ class AventureController extends Controller
                 'message' => $messageFinal,
             ], 200);
         } catch (Exception $e) {
+            report($e);
             return response()->json([
                 'res' => false,
                 'exception' => $e->getMessage(),

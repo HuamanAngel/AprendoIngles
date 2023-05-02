@@ -43,6 +43,7 @@ class ChallengeController extends Controller
             ], 200);
 
         } catch (Exception $e) {
+            report($e);
             return response()->json([
                 'res' => false,
                 'exception' => $e->getMessage(),

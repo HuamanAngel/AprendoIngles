@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,23 +13,34 @@ class AuthController extends Controller
 
     public function signUp(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'lastname' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string'
-        ]);
-        
-        $user = User::create([
-            'us_name' => $request->name,
-            'us_lastname' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-        return response()->json([
-            'res'=>true,
-            'message' => 'El usuario fue creado correctamente',
-        ], 201);
+        try {
+
+
+            $request->validate([
+                'name' => 'required|string',
+                'lastname' => 'required|string',
+                'email' => 'required|string|email|unique:users',
+                'password' => 'required|string'
+            ]);
+
+            $user = User::create([
+                'us_name' => $request->name,
+                'us_lastname' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password)
+            ]);
+            return response()->json([
+                'res' => true,
+                'message' => 'El usuario fue creado correctamente',
+            ], 201);
+        } catch (Exception $e) {
+            report($e);
+            return response()->json([
+                'res' => false,
+                'exception' => $e->getMessage(),
+                'message' => 'Error al intentar crear el usuario, intentelo mas tarde',
+            ], 500);
+        }
     }
 
     /**
@@ -36,38 +48,48 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-        $credentials = request(['email', 'password']);
+        try {
+
+            $request->validate([
+                'email' => 'required|string|email',
+                'password' => 'required|string',
+                'remember_me' => 'boolean'
+            ]);
+            $credentials = request(['email', 'password']);
 
 
-        // auth()->login($user);
-        if (!Auth::guard('web')->attempt($credentials)){
+            // auth()->login($user);
+            if (!Auth::guard('web')->attempt($credentials)) {
+
+                return response()->json([
+                    'res' => false,
+                    'message' => 'Correo o contraseña erroneos'
+                ], 401);
+            }
+            // Elimina todos los tokens que no sean del usuario actual
+            $user = Auth::guard('web')->user();
+            $user->tokens->each(function ($tokena, $key) {
+                $tokena->delete();
+            });
+
+            $token = $user->createToken('authToken');
 
             return response()->json([
-                'res'=>false,
-                'message' => 'Correo o contraseña erroneos'
-            ], 401);
+                'res' => true,
+                'message' => 'Login exitoso',
+                'token_type' => 'Bearer',
+                'token' => $token->accessToken,
+                'expired' => Carbon::parse($token->token->expires_at)->toDateTimeString(),
+                'data' => $user,
+            ], 200);
+        } catch (Exception $e) {
+            report($e);
+            return response()->json([
+                'res' => false,
+                'exception' => $e->getMessage(),
+                'message' => 'Error al intentar iniciar sesion, intentelo mas tarde',
+            ], 500);
         }
-        // Elimina todos los tokens que no sean del usuario actual
-        $user = Auth::guard('web')->user();
-        $user->tokens->each(function($tokena, $key) {
-            $tokena->delete();
-        });
-
-        $token = $user->createToken('authToken');
-
-        return response()->json([
-            'res'=>true,
-            'message'=>'Login exitoso',
-            'token_type'=> 'Bearer',
-            'token' => $token->accessToken,
-            'expired' => Carbon::parse($token->token->expires_at)->toDateTimeString(),
-            'data' => $user,
-        ], 200);
     }
 
     /**
@@ -89,5 +111,4 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
-
 }

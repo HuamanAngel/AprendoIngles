@@ -79,6 +79,7 @@ class LevelController extends Controller
                 'message' => $allLevels,
             ], 200);
         } catch (Exception $e) {
+            report($e);
             return response()->json([
                 'res' => false,
                 'exception' => $e->getMessage(),
